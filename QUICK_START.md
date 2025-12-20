@@ -5,9 +5,11 @@ Welcome to LeetcodeSess! This guide will help you get started with documenting y
 ## Step 1: Clone the Repository
 
 ```bash
-git clone https://github.com/Bongiiii/LeetcodeSess.git
+git clone https://github.com/YOUR-USERNAME/LeetcodeSess.git
 cd LeetcodeSess
 ```
+
+> **Note:** Replace `YOUR-USERNAME` with your actual GitHub username.
 
 ## Step 2: Start Your First Session
 

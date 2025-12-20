@@ -113,7 +113,7 @@ LeetcodeSess/
 
 ## 🔗 Useful Links
 
-- [My LeetCode Profile](https://leetcode.com/your-username/)
+- [My LeetCode Profile](https://leetcode.com/your-username/) *(Update with your username)*
 - [Problem-Solving Patterns Guide](https://hackernoon.com/14-patterns-to-ace-any-coding-interview-question-c5bb3357f6ed)
 
 ## 📈 Milestones
