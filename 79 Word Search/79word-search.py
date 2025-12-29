@@ -1,59 +1,61 @@
+from itertools import pairwise
+
 class Solution:
     def exist(self, board: List[List[str]], word: str) -> bool:
         """
-        Understand:
-        input - 2d array of strings and string, output - boolean
+        U:
+        input - an array of arrays of characters, a string
+        output - boolean
 
-        Match:
-        dfs/ recursion
-        pointers
+        prob summary: determine if there are valid paths to find the word given the board.
 
-        Plan:
-        initiate a helper function that helps traverse the 2d array,
-        movement is only in the horizontal(left and right), vertical(up and  down)
-        helper should be mark letters that have been checked so as not to reuse letters
-         and avoid infinite loops
-        move as long as it's within bounds
-        then main function, chheck if current element in array is same as element from pointer, 
-        if so increment pointer, move array pointer too and do that by calling recursively the helper
-        if you can't form the whole word or even part of the characters by moving, early return false
-        otherwise true when word is found
+        M:
+        graph
+        dfs
+        backtracking
+        pointers approach
 
-        R/E:
-        s/c == O(N), recursive calls
-        t/c = O(M*N), we visit all nodes
+        P:
+        use pointer to keep track of characters in word
+        use dfs to check for valid characters to make word moving either horizontally or vertically
+        remember to mark and unmark to ensure full exploration of potential paths
+        base cases: early termination
+
+        I:
+
+        R:
+
+        E:
+        s/c = O(L), length of word...the potential length(depth rather) of the recursive stack
+        t/c = O(m*n*L)
         """
-        def dfsHelper(x, y, index):
-           # Check if the last character matches 
-            if index == len(word) - 1:
-                return board[x][y] == word[index]
-            # If current character does not match the word character at index, return False
-            if board[x][y] != word[index]:
+        rows, cols, directions = len(board), len(board[0]), (-1,0,1,0,-1)
+
+        def dfs(i,j,k):
+            #base case
+            if k == len(word) - 1:
+                return board[i][j] == word[k]
+
+            if board[i][j] != word[k]:
                 return False
-            # Store the current character and mark the cell as visited with "0"
-            temp = board[x][y]
-            board[x][y] = "0"
-            # Define directions for exploration: up, right, down, left
-            directions = [(-1, 0), (0, 1), (1, 0), (0, -1)]
-            # Loop through all possible directions
-            for dx, dy in directions:
-                new_x, new_y = x + dx, y + dy
-                # Check boundaries and if the next cell is not visited
-                if 0 <= new_x < row and 0 <= new_y < col and board[new_x][new_y] != "0":
-                    # Recur with the new position and the next character index
-                    if dfsHelper(new_x, new_y, index + 1):
+
+            og_char = board[i][j]
+            board[i][j] = "?"
+
+            for cur_row, cur_col in pairwise(directions):
+                new_row, new_col = cur_row + i, cur_col + j
+
+                if (0<=new_row<rows) and (0<=new_col<cols) and board[new_row][new_col] != "?":
+                    if dfs(new_row, new_col, k+1):
+                        board[i][j] = og_char
                         return True
-            # Restore the current cell's value after exploring all directions
-            board[x][y] = temp
+
+            board[i][j] = og_char
             return False
-           
 
-        row, col = len(board), len(board[0])
-
-        for i in range(row):
-            for j in range(col):
-                if board[i][j] == word[0] and dfsHelper(i,j,0):
+        for row in range(rows):
+            for col in range(cols):
+                if dfs(row,col,0):
                     return True
 
         return False
-        #main function
