@@ -1,50 +1,45 @@
 class Trie:
 
     def __init__(self):
-       #initialize a dicttionary to store trie nodes
-       self.root = {} 
+        self.childNodes = [None] * 26
+        self.endOfword = False
 
     def insert(self, word: str) -> None:
-        #first create a node
-        node = self.root
+        currNode = self
 
-        #iterate through the words 
-        for char in word:
-            #first check if word is already inserted
-            if char not in node:
-                #create an instance of it
-                node[char] = {}
+        for c in word:
+            indexPos = ord(c) - ord('a')
 
-            node = node[char]
+            if currNode.childNodes[indexPos] is None:
+                currNode.childNodes[indexPos] = Trie()
 
-        #maker/ flagger to make end of word
-        node["#"] = True
+            currNode = currNode.childNodes[indexPos]
+
+        currNode.endOfword = True
+
+    #search helper
+    def searchHelper(self, word):
+        currNode = self
+
+        for c in word:
+            indexPos = ord(c) - ord('a')
+
+            if currNode.childNodes[indexPos] is None:
+                return None
+
+            currNode = currNode.childNodes[indexPos]
+
+        return currNode
 
     def search(self, word: str) -> bool:
-        #first create a node
-        node = self.root
+        searchNodes = self.searchHelper(word)
 
-        #iterate through word
-        for char in word:
-            if char not in node:
-                return False
+        return searchNodes is not None and searchNodes.endOfword
 
-            node = node[char]
-
-        #maker for when at the end of the word
-        return "#" in node
-        
     def startsWith(self, prefix: str) -> bool:
-        node = self.root
+        searchPrefix = self.searchHelper(prefix)
 
-        #iterate in prefixes
-        for char in prefix:
-            if char not in node:
-                return False
-
-            node = node[char]
-
-        return True
+        return searchPrefix is not None
 
 
 # Your Trie object will be instantiated and called as such:
