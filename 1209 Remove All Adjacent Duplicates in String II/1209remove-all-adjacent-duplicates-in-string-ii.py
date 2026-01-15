@@ -24,31 +24,18 @@ class Solution:
         t/c = O(n), n - length of string as we visit every character
         E:
         """
-        crusher, i = [], 0
-
-        while i < len(s):
-
-            j = i
-
-            while (j < len(s)) and s[j] == s[i]:
-                j += 1
-
-            neighbor_count = j - i
-            mod_count = neighbor_count % k
-
-            if crusher and crusher[-1][0] == s[i]:
-                crusher[-1][1] = (crusher[-1][1] + mod_count) % k
-
-                if crusher[-1][1] == 0:
-                    crusher.pop()
-
-            elif mod_count:
-                crusher.append([s[i], mod_count])
-
-            i = j
-
-        res = [character * count for character, count in crusher]
-
-        return "".join(res)
-
+        stack = []  
         
+        for i in range(len(s)):
+            if not stack:
+                stack.append([s[i], 1])
+            else:
+                if stack[-1][0] == s[i]:
+                    stack[-1][1] += 1
+                    if stack[-1][1] == k:
+                        stack.pop() 
+                else:
+                    stack.append([s[i], 1])
+        
+        return "".join(char * count for char, count in stack)
+            
