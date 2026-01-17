@@ -1,61 +1,64 @@
-from itertools import pairwise
-
 class Solution:
     def exist(self, board: List[List[str]], word: str) -> bool:
         """
         U:
-        input - an array of arrays of characters, a string
-        output - boolean
-
-        prob summary: determine if there are valid paths to find the word given the board.
+        find a word in a cross word puzzle, can only move up, down, L, R
+        - one character is to used once/ none reusable
 
         M:
-        graph
         dfs
         backtracking
-        pointers approach
+        graph
 
         P:
-        use pointer to keep track of characters in word
-        use dfs to check for valid characters to make word moving either horizontally or vertically
-        remember to mark and unmark to ensure full exploration of potential paths
-        base cases: early termination
-
+        use a pointer to iterate through the characters in the word
+        when you find the character in board, then trigger a recursive helper
+         func that recursively checks if that word can be made using any neighbouring chars
+        so backtracking comes in when we need to know where we stopped and be able to keep
+         track of past chars in case we go deep down and then along the way fail,
+         we need to explore other options and just backtrack
+        
         I:
 
-        R:
-
-        E:
-        s/c = O(L), length of word...the potential length(depth rather) of the recursive stack
-        t/c = O(m*n*L)
+        R/E:
+        s/c = O(n), recursive calls...recursive stack size
+        t/c = O(m*n)
         """
-        rows, cols, directions = len(board), len(board[0]), (-1,0,1,0,-1)
+        m, n, moves = len(board), len(board[0]), (-1, 0 , 1, 0, -1)
 
-        def dfs(i,j,k):
-            #base case
+        def dfs(i,j,k): #takes in indices for index in board, and pointer for curr char in word
+            #base case when we have finished word
             if k == len(word) - 1:
                 return board[i][j] == word[k]
 
+            #chars currently pointed to dont match
             if board[i][j] != word[k]:
                 return False
 
-            og_char = board[i][j]
-            board[i][j] = "?"
+            #preserve curr char
+            track = board[i][j]
 
-            for cur_row, cur_col in pairwise(directions):
-                new_row, new_col = cur_row + i, cur_col + j
+            #mark as visited
+            board[i][j] = "#"
 
-                if (0<=new_row<rows) and (0<=new_col<cols) and board[new_row][new_col] != "?":
-                    if dfs(new_row, new_col, k+1):
-                        board[i][j] = og_char
+            for row, col in pairwise(moves):
+                newR, newC = i + row, j + col
+
+                #check bounds and that cell hasnt been visited
+                if (0 <= newR < m) and (0 <= newC < n) and board[newR][newC] != "#":
+                    if dfs(newR, newC, k + 1):
+                        #update original not new
+                        board[i][j] = track
                         return True
 
-            board[i][j] = og_char
+            board[i][j] = track
             return False
-
-        for row in range(rows):
-            for col in range(cols):
-                if dfs(row,col,0):
+        
+        #define bounds for board
+        for r in range(m):
+            for c in range(n):
+                #recursively check for word in board
+                if dfs(r,c,0):
                     return True
 
         return False
