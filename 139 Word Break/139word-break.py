@@ -1,33 +1,34 @@
 class Solution:
     def wordBreak(self, s: str, wordDict: List[str]) -> bool:
         """
-        Using memoization and backtracking
-        we use memoization to avoid redudancy
+        U:
+        check if word can be segmented according to wordDict 
+        input - string and list of strings , output - boolean
 
-        s/c = O(N), memoization array
-        t/c O(N^2 * m), m = len of wordDict, n size of s
+        M:
+        dp
+        memoization
+        string manipulation
+
+        P:
+        put dictionary into a set as to remove duplicates
+        then have a dp array of the size if the input string, which keeps
+         booleans that determine if that segment is in wordset
+        an empty can always be segmented 
+        return if the entire string can be segmented
+
+        I:
+
+        R/E:
+        s/c = O(n + m.k), n - size of dp array, m -  word dict, k - average length of word
+        t/c = O(n^3), 
 
         """
-        memo: Dict[int, bool] = {}
+        wordSet = set(wordDict)
 
-        def helper(startIdx):
-            #base case
-            if startIdx == len(s):
-                return True
+        dp = [True] + [False] * len(s)
 
-            if startIdx in memo:
-                return memo[startIdx]
+        for i in range(1, len(s) + 1):
+            dp[i] = any( dp[j] and s[j:i] in wordSet for j in range(i))
 
-            #flag to check for startidx
-            ans = False
-
-            for word in wordDict:
-                if s[startIdx:].startswith(word):
-                    if helper(startIdx + len(word)):
-                        ans =  True
-                        break
-
-            memo[startIdx] = ans
-            return ans
-        
-        return helper(0)
+        return dp[len(s)]
