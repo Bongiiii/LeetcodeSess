@@ -1,26 +1,37 @@
+from collections import defaultdict, deque
+
 class Solution:
     def findOrder(self, numCourses: int, prerequisites: List[List[int]]) -> List[int]:
-        visited = [False for _ in range(numCourses)]
-        finished = []
-        graph = defaultdict(list)
         
+        graph, dependencies = defaultdict(list), [0] * numCourses
+
+        #build graph
         for course, prereq in prerequisites:
             graph[prereq].append(course)
-        
-        def dfs(prereq):
-            for course in graph[prereq]:
-                if not visited[course]:
-                    visited[course] = True
-                    if not dfs(course): return False  # unable to finish course
-                elif course not in finished:          # cycle in graph
-                    return False
-            finished.append(prereq)
-            return True
-            
-        for i in range(numCourses):   # visit all trees in graph
-            if not visited[i]:
-                visited[i] = True
-                if not dfs(i): return []
+            dependencies[course] += 1
 
-        finished.reverse()    # topological ordering = reverse finish time
-        return finished 
+        #list with course order after completing prereq
+        res = []
+
+        #add courses that can be taken immediately
+        q = deque([course for course, degree in enumerate(dependencies) if degree == 0])
+
+        while q:
+            currCourse = q.popleft()
+            #add the queue you can immediately take
+            res.append(currCourse)
+
+            #check/ add the courses that can be taken once curr course is cleared
+            for dependCourse in graph[currCourse]:
+                #reduce the dependencies
+                dependencies[dependCourse] -= 1
+
+                #check if its now zero after reducing
+                if dependencies[dependCourse] == 0:
+                    q.append(dependCourse)
+
+        return res if len(res) == numCourses else []
+
+
+
+
