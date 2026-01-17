@@ -1,17 +1,16 @@
 class Solution:
     def lengthOfLongestSubstring(self, s: str) -> int:
-        #pointer to mark the start of traversal, variable for longest substring so far and set to check for duplicates
+        longest = l = 0
+        window = set()
 
-        left, longest, uniqueChar = 0, 0, set()
+        for r in range(len(s)):
+            while s[r] in window:
+                window.remove(s[l])
+                l += 1
 
-        for right in range(len(s)):
-            #handle duplicates
-            while s[right] in uniqueChar:
-                uniqueChar.remove(s[left])
-                left += 1
+            window.add(s[r])
+            longest = max(longest, r - l + 1)
 
-            #unique character
-            uniqueChar.add(s[right])
-            longest = max(longest, right - left + 1)
-    
         return longest
+   
+
