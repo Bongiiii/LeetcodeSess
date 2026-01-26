@@ -1,31 +1,27 @@
-from collections import defaultdict
 from bisect import bisect_right
 
 class TimeMap:
 
     def __init__(self):
-        #dictionary to store key-value pairs
-        self.store = defaultdict(list)
+        #hashmap with tuple that stores key - value((timestamp, value)) pair
+        self.hashMap = defaultdict(list)
 
     def set(self, key: str, value: str, timestamp: int) -> None:
-        #store the key value pairs in hashset
-        self.store[key].append((timestamp, value))
+        #adding to hashmap
+        self.hashMap[key].append((timestamp, value))
 
     def get(self, key: str, timestamp: int) -> str:
-        # Base case: key not found
-        if key not in self.store:
+        #base case key doesnt exist in hashmap
+        if key not in self.hashMap:
             return ""
 
-        pair = self.store[key]
-        # Find the index where timestamp would be inserted
-        i = bisect_right(pair, (timestamp, ""))
+        #use binary search logic as timestamp is in increasing order
+        #implement with bisectright
+        time_value = self.hashMap[key]
+        elem = bisect_right(time_value, (timestamp, chr(127)))
 
-        # If i == 0, it means there is no valid timestamp <= given timestamp
-        if i == 0:
-            return "" 
-        
-        # Otherwise, return the value at the largest valid timestamp
-        return pair[i - 1][1]
+        return time_value[elem-1][1] if elem else "" 
+
 
 # Your TimeMap object will be instantiated and called as such:
 # obj = TimeMap()
